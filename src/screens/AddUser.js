@@ -42,8 +42,8 @@ const AddUser = () => {
   };
   return (
     <KeyboardAvoidingView
-    behavior={Platform.OS === 'android' ? 'padding' : 'height'}
-    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    style={{ flex: 1 ,backgroundColor:'#fff1e0'}}
   >
     <View style={{flex: 1,backgroundColor:'#fff1e0'}}>
       <TextInput

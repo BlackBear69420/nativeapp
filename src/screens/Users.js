@@ -4,6 +4,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {deleteUser} from '../redux/UserSlice';
 import { auth } from '../../firebase'
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 
@@ -21,7 +22,7 @@ const handleSignOut = () => {
 };
   console.log(users);
   return (
-    <>
+<>
      <TouchableOpacity
         style={{
           height: 60,
@@ -113,7 +114,7 @@ const handleSignOut = () => {
         <Text style={{fontSize:24,color:'white'}}>Sign out</Text>
       </TouchableOpacity>
     </View>
-    </>
+</>
   );
 };
 

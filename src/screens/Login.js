@@ -31,7 +31,6 @@ const Login = () => {
   return (
     <KeyboardAvoidingView
     style={styles.container}
-    behavior="padding"
   >
     <View style={styles.inputContainer}>
       <TextInput
