@@ -1,8 +1,10 @@
-import {View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView} from 'react-native';
+import {View, Text, TouchableOpacity, Alert, KeyboardAvoidingView} from 'react-native';
 import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
+import { TextInput } from 'react-native-paper';
 import {addUser, updateUser} from '../redux/UserSlice';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const AddUser = () => {
   const route = useRoute();
@@ -43,82 +45,88 @@ const AddUser = () => {
   return (
     <KeyboardAvoidingView
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    style={{ flex: 1 ,backgroundColor:'#fff1e0'}}
+    style={{ flex: 1 ,}}
   >
-    <View style={{flex: 1,backgroundColor:'#fff1e0'}}>
+    <LinearGradient colors={['#FA351F', '#FA8072']} style={{ padding: 16 }}  start={{ x: 0, y: 0 }} // Start from the top-left corner
+      end={{ x: 1, y: 0 }} >
+      <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white',alignSelf:'center' }}>
+        Add User
+      </Text>
+    </LinearGradient>
+    <View style={{flex: 1,margin:5,alignItems:'center',justifyContent:'center'}}>
       <TextInput
-        placeholder="Enter User Name"
         value={name}
+        mode='outlined'
+        label="Enter User Name"
         onChangeText={txt => setName(txt)}
         style={{
           width: '90%',
           height: 50,
           alignSelf: 'center',
-          marginTop: 50,
+          marginTop: 20,
           borderRadius: 10,
-          paddingLeft: 10,
-          fontSize:19,
+          fontSize:15,
           backgroundColor:'white'
         }}
       />
       <TextInput
-        placeholder="Enter User Email"
+        mode='outlined'
+        label="Enter User Email"
         value={email}
         onChangeText={txt => setEmail(txt)}
         style={{
           width: '90%',
           height: 50,
           alignSelf: 'center',
-          marginTop: 50,
+          marginTop: 20,
           borderRadius: 10,
-          paddingLeft: 10,
-          fontSize:19,
+          fontSize:15,
           backgroundColor:'white'
         }}
         keyboardType="email-address"
       />
       <TextInput
-        placeholder="Enter User Mobile"
+        mode='outlined'
+        label="Enter User Number"
         value={mobile}
         onChangeText={txt => setMobile(txt)}
         style={{
           width: '90%',
           height: 50,
           alignSelf: 'center',
-          marginTop: 50,
+          marginTop: 20,
           borderRadius: 10,
-          paddingLeft: 10,
-          fontSize:19,
+          fontSize:15,
           backgroundColor:'white'
         }}
         keyboardType="number-pad"
         maxLength={10}
       />
       <TextInput
-        placeholder="Enter User Address"
+        mode='outlined'
+        label="Enter User Address"
         value={address}
         onChangeText={txt => setAddress(txt)}
         style={{
           width: '90%',
           height: 50,
           alignSelf: 'center',
-          marginTop: 50,
+          marginTop: 20,
           borderRadius: 10,
-          paddingLeft: 10,
           backgroundColor:'white',
-          fontSize:19,
+          fontSize:15,
         }}
       />
       <TouchableOpacity
         style={{
           width: '90%',
-          height: 50,
-          backgroundColor:'#FF5F15',
+          backgroundColor:'#FA6857',
           alignSelf: 'center',
           justifyContent: 'center',
           alignItems: 'center',
           marginTop: 50,
           borderRadius: 10,
+          padding:10
         }}
         onPress={() => {
           if (validate()) {
@@ -138,10 +146,11 @@ const AddUser = () => {
 
             navigation.goBack();
           } else {
-            Alert.alert('Please Fill Correct Data');
+            Alert.alert('Error saving',
+            'Please Fill Correct Data');
           }
         }}>
-        <Text style={{color: 'white',fontSize:25,fontWeight:700}}>Save User</Text>
+        <Text style={{color: 'white',fontSize:18,fontWeight:700}}>Save User</Text>
       </TouchableOpacity>
     </View>
     </KeyboardAvoidingView>
