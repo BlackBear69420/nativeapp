@@ -15,7 +15,6 @@ const AppNavigator = () => {
         <Stack.Screen options={{ headerShown: false }} name="LoginScreen" component={LoginScreen} />
         <Stack.Screen options={{ headerShown: false }} name='Users' component={Users} />
         <Stack.Screen options={{ headerShown: false }} name='AddUser' component={AddUser} />
-        
     </Stack.Navigator>
    </NavigationContainer>
   )

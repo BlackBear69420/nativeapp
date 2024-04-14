@@ -4,60 +4,75 @@ import { auth } from '../../firebase';
 import { TextInput } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { BASE_URL } from '../../config';
 
-const Login = () => {
-  const [email1, setEmail1] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(true);
 
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async user => {
-      setLoading(false); // Set loading to false when the authentication check is complete
-      if (user) {
-        navigation.replace('Users');
-      } else {
+  const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState('');
+  
+    const navigation = useNavigation();
+  
+    useEffect(() => {
+      const checkLoggedIn = async () => {
+        setLoading(true);
         try {
-          const storedUser = await AsyncStorage.getItem('user');
-          if (storedUser) {
+          const token = await AsyncStorage.getItem('token');
+          if (token) {
             navigation.replace('Users');
+          } else {
+            setLoading(false);
           }
         } catch (error) {
-          console.error('Error reading user from AsyncStorage:', error);
+          console.error('Error reading token from AsyncStorage:', error);
+          setLoading(false);
         }
+      };
+  
+      checkLoggedIn();
+    }, []);
+  
+    const handleLogin = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${BASE_URL}auth/user/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }), 
+        });
+        const responseData = await response.json();
+  
+        if (responseData.success) {
+          await AsyncStorage.setItem('token', responseData.token);
+          navigation.navigate('Users');
+          setErrorMessage('');
+        } else {
+          alert(responseData.message);
+        }
+      } catch (error) {
+        console.error('Error during login:', error);
+        setErrorMessage('An error occurred during login. Please try again later.');
       }
-    });
-
-    return unsubscribe;
-  }, []);
-
-  const handleLogin = () => {
-    setLoading(true); // Set loading to true when login is initiated
-    auth.signInWithEmailAndPassword(email1, password)
-      .then(userCredentials => {
-        const user = userCredentials.user;
-        console.log('Logged in with:', user.email);
-        AsyncStorage.setItem('user', user.email);
-      })
-      .catch(error => {
-        alert(error.message);
-        setLoading(false); // Set loading to false when login fails
-      });
-  };
+      setLoading(false); 
+    };
 
   return (
     <KeyboardAvoidingView style={styles.container}>
-      {loading ? ( // Show activity indicator while loading is true
-        <ActivityIndicator size="large" color="white" />
-      ) : ( // Show login components when loading is false
+      {loading ? (
+        <ActivityIndicator size="large" color="#1338be" />
+      ) : ( 
+        
         <View
           style={{
             width: '90%',
             alignSelf: 'center',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: '#FA503D',
+            backgroundColor: '#4169e1',
             paddingVertical: 30,
             borderRadius: 10,
             ...Platform.select({
@@ -76,12 +91,14 @@ const Login = () => {
               },
             }),
           }}>
+        
           <View style={styles.inputContainer}>
             <TextInput
               label="Email"
-              value={email1}
-              onChangeText={text => setEmail1(text)}
+              value={email}
+              onChangeText={text => setEmail(text)}
               style={styles.input}
+              textColor='black'
             />
             <TextInput
               label="Password"
@@ -89,6 +106,7 @@ const Login = () => {
               onChangeText={text => setPassword(text)}
               style={styles.input}
               secureTextEntry
+              textColor='black'
             />
           </View>
 
@@ -101,7 +119,7 @@ const Login = () => {
             <TouchableOpacity
               style={{ flexDirection: 'row', paddingTop: 10 }}
               onPress={() => navigation.navigate('LoginScreen')}>
-              <Text style={{ fontSize: 17, color: 'white' }}>Not a user? </Text>
+              <Text style={{ fontSize: 17, color: 'white' }}>Not an user? </Text>
               <Text style={{ fontSize: 18, color: 'white', fontWeight: 700 }}>
                 Click here
               </Text>
@@ -120,7 +138,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FA8072',
+    backgroundColor: '#f8f4ff',
   },
   inputContainer: {
     width: '80%',
@@ -137,7 +155,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   button: {
-    backgroundColor: '#FA6857',
+    backgroundColor: '#1338be',
     width: '100%',
     padding: 10,
     borderRadius: 10,

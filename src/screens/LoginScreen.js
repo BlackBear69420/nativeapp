@@ -1,35 +1,54 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useEffect, useState } from 'react'
-import { KeyboardAvoidingView, StyleSheet, Text,TouchableOpacity, View } from 'react-native'
-import {auth} from '../../firebase'
-import { TextInput } from 'react-native-paper'
+import { Alert, KeyboardAvoidingView, StyleSheet, Text,TouchableOpacity, View } from 'react-native'
+import { TextInput,Snackbar } from 'react-native-paper'
+import { BASE_URL } from '../../config'
 
 const LoginScreen = () => {
   const [email1, setEmail1] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
+  const navigation = useNavigation();
+  const [visible, setVisible] = React.useState(false);
 
-  const navigation = useNavigation()
+  const onToggleSnackBar = () => setVisible(!visible);
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) {
-        navigation.replace("Users")
-      }
-    })
-
-    return unsubscribe
-  }, [])
+  const onDismissSnackBar = () => setVisible(false);
 
   const handleSignUp = () => {
-    auth
-      .createUserWithEmailAndPassword(email1, password)
-      .then(userCredentials => {
-        const user = userCredentials.user;
-        console.log('Registered with:', user.email);
-        
+    const userData = {
+      email: email1,
+      name:name,
+      password: password,
+    };
+  
+    fetch(`${BASE_URL}auth/user/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to register');
+        }
+        return response.json();
       })
-      .catch(error => alert(error.message))
-  }
+      .then(data => {
+        if (data.success) {
+          console.log('User registered successfully');
+          Alert.alert('Success', 'User registered successfully');
+          navigation.navigate('Login');
+        } else {
+          throw new Error(data.message || 'Registration failed');
+        }
+      })
+      .catch(error => {
+        alert(error.message || 'An error occurred during signup. Please try again later.');
+      });
+  };
+  
 
 
   return (
@@ -42,7 +61,7 @@ const LoginScreen = () => {
         alignSelf: 'center',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#FA503D',
+        backgroundColor: '#4169e1',
         paddingVertical: 30,
         borderRadius: 10,
         ...Platform.select({
@@ -67,6 +86,14 @@ const LoginScreen = () => {
           value={email1}
           onChangeText={text => setEmail1(text)}
           style={styles.input}
+          textColor='black'
+        />
+        <TextInput
+          label="Name"
+          value={name}
+          onChangeText={text => setName(text)}
+          style={styles.input}
+          textColor='black'
         />
         <TextInput
           label="Password"
@@ -74,7 +101,9 @@ const LoginScreen = () => {
           onChangeText={text => setPassword(text)}
           style={styles.input}
           secureTextEntry
+          textColor='black'
         />
+
       </View>
 
       <View style={styles.buttonContainer}>
@@ -85,6 +114,14 @@ const LoginScreen = () => {
           <Text style={styles.buttonOutlineText}>Register</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity
+              style={{ flexDirection: 'row', paddingTop: 10 }}
+              onPress={() => navigation.navigate('Login')}>
+              <Text style={{ fontSize: 17, color: 'white' }}>Already an user? </Text>
+              <Text style={{ fontSize: 18, color: 'white', fontWeight: 700 }}>
+                Click here
+              </Text>
+            </TouchableOpacity>
 </View>
     </KeyboardAvoidingView>
   )
@@ -97,7 +134,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FA8072',
+    backgroundColor: '#f8f4ff',
   },
   inputContainer: {
     width: '80%',
@@ -114,7 +151,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   button: {
-    backgroundColor: '#FA6857',
+    backgroundColor: '#1338be',
     width: '100%',
     padding: 8,
     borderRadius: 10,
