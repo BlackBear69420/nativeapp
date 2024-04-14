@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Alert, KeyboardAvoidingView, StyleSheet, Text,TouchableOpacity, View } from 'react-native'
 import { TextInput,Snackbar } from 'react-native-paper'
 import { BASE_URL } from '../../config'
+import Toast from 'react-native-toast-message';
 
 const LoginScreen = () => {
   const [email1, setEmail1] = useState('')

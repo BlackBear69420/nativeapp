@@ -90,7 +90,7 @@ const Users = () => {
           />
           <Text style={styles.loadingText}>Loading...</Text>
         </View>
-      ) : data.length === 0 ? (
+      ) : data.data.length === 0 ? (
         <View style={styles.emptyContainer}>
           <AnimatedLottieView
             source={Empty}
@@ -121,7 +121,7 @@ const Users = () => {
 <TouchableOpacity style={styles.signOutButton} onPress={showDialog}><Text><FontAwesomeIcon size={25} color='#4169e1' icon={faSignOut} /></Text></TouchableOpacity>
 
 <Portal>
-  <Dialog visible={visible} onDismiss={hideDialog}>
+  <Dialog style={{backgroundColor:'white'}} visible={visible} onDismiss={hideDialog}>
     <Dialog.Title>Alert</Dialog.Title>
     <Dialog.Content>
       <Text style={{ color: 'black', fontSize: 17 }}>Are you sure you want to logout?</Text>

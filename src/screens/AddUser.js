@@ -1,13 +1,14 @@
 import {View, Text, TouchableOpacity, Alert, KeyboardAvoidingView,Pressable,PermissionsAndroid,Image, ScrollView, ActivityIndicator} from 'react-native';
 import React, {useState,useEffect} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
-import { TextInput } from 'react-native-paper';
+import { Button, TextInput } from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '../../config';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import Toast from 'react-native-toast-message';
 
 const AddUser = () => {
   const [name, setName] = useState('');
@@ -74,7 +75,7 @@ const AddUser = () => {
       Alert.alert('Please select an image');
       return;
     }
-   setLoading(true)
+    setLoading(true);
     const token = await AsyncStorage.getItem('token');
   
     const formData = new FormData();
@@ -85,7 +86,7 @@ const AddUser = () => {
       type: selectedImage.mime,
       name: 'image.jpg',
     });
-  console.log(formData)
+  
     try {
       const response = await fetch(`${BASE_URL}form`, {
         method: 'POST',
@@ -95,37 +96,60 @@ const AddUser = () => {
         },
         body: formData,
       });
-    
+  
       console.log('Response:', response);
-    
+  
       const responseData = await response.json();
-    
+  
       if (response.ok) {
         console.log(responseData);
-        if (responseData.success) {
-          console.log('Data registered:', responseData.message);
-          navigation.goBack();
-        } else {
-         Alert('Error:', responseData.message);
-        }
-      } else if (response.status === 400) {
-        console.error('Error:', responseData.message);
+        console.log('Data registered:', responseData.message);
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: responseData.message,
+          position: 'bottom',
+          visibilityTime: 3000, // 3 seconds
+          autoHide: true,
+          onHide: () => {
+            navigation.goBack();
+          }
+        });
       } else {
-        console.error('Error:', responseData);
+        console.error('Error:', responseData.message);
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: responseData.message || 'Something went wrong',
+          position: 'bottom',
+          visibilityTime: 3000, // 3 seconds
+          autoHide: true,
+        });
       }
     } catch (error) {
       console.error('Error:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'An unexpected error occurred',
+        position: 'bottom',
+        visibilityTime: 3000, // 3 seconds
+        autoHide: true,
+      });
     }
-    finally{
-      setLoading(false)
+    finally {
+      setLoading(false);
     }
-    
   };
+  
+
+
   return (
     <KeyboardAvoidingView
     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     style={{ flex: 1 ,backgroundColor:'#f8f4ff'}}
   >
+     <Toast style={{marginTop:50}} />
     <ScrollView>
     <LinearGradient colors={['#e6e6fa', '#e6e6fa']} style={{ display:'flex',flexDirection:'row',paddingVertical:10}}  start={{ x: 0, y: 0 }} 
       end={{ x: 1, y: 0 }} >
