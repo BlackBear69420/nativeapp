@@ -2,19 +2,17 @@
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
-import Users from '../screens/Users'
-import AddUser from '../screens/AddUser'
-import Login from '../screens/Login'
-import LoginScreen from '../screens/LoginScreen'
+import Home from '../screens/Home'
+import RecipeDetails from '../screens/RecipeDetails'
+import Search from '../screens/Search'
 const Stack=createStackNavigator()
 const AppNavigator = () => {
   return (
    <NavigationContainer>
     <Stack.Navigator>
-    <Stack.Screen options={{ headerShown: false }} name="Login" component={Login} />
-        <Stack.Screen options={{ headerShown: false }} name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen options={{ headerShown: false }} name='Users' component={Users} />
-        <Stack.Screen options={{ headerShown: false }} name='AddUser' component={AddUser} />
+      <Stack.Screen options={{headerShown:false}} name='Home' component={Home}/>
+      <Stack.Screen options={{headerShown:false}} name='RecipeDetails' component={RecipeDetails}/>
+      <Stack.Screen options={{headerShown:false}} name='Search' component={Search}/>
     </Stack.Navigator>
    </NavigationContainer>
   )
